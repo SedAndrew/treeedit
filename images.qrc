@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/about.png</file>
+        <file>icon/addAtr.png</file>
+        <file>icon/apptree.png</file>
+        <file>icon/copy.png</file>
+        <file>icon/cut.png</file>
+        <file>icon/delete.png</file>
+        <file>icon/exit.png</file>
+        <file>icon/find.png</file>
+        <file>icon/new.png</file>
+        <file>icon/open.png</file>
+        <file>icon/openFile.png</file>
+        <file>icon/paste.png</file>
+        <file>icon/save.png</file>
+        <file>icon/saveAs.png</file>
+        <file>icon/view.png</file>
+    </qresource>
+</RCC>
