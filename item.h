@@ -33,7 +33,11 @@ public:
 
 private:
     QList<Item* > childItems;
-    QList<QVariant> itemData;
+    QList<QVariant > itemData;
+    QList<QString > m_atribut;
+    QList<QString > m_value;
+    QList<QString > m_comments;
+    QString m_text;
     Item *parentItem;
 };
 

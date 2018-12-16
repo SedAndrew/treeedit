@@ -70,10 +70,10 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     if (position < 0 || position > parentItem->childCount())
         return false;
     QList<QVariant> blankList;
-    for (int column = 0; column < columnCount(); ++column)
+    for (int column = 0; column < columnCount(); column++)
         blankList << QVariant("");
     beginInsertRows(parent, position, position + rows - 1);
-    for (int row = 0; row < rows; ++row) {
+    for (int row = 0; row < rows; row++) {
         Item *newItem = new Item(blankList, parentItem);
         if (!parentItem->insertChild(position, newItem))
             break;
