@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "../Billd_Project_EditXMLFile/ui_mainwindow.h"
 
 #include <QDebug>
 #include <QMap>
