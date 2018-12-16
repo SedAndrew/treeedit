@@ -24,14 +24,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    tree/treemodel.cpp \
+    item.cpp \
+    table/tablemodel.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    tree/treemodel.h \
+    item.h \
+    table/tablemodel.h
 
-FORMS    += mainwindow.ui \
+FORMS    += \
     formnewtag.ui \
     form_newatr.ui \
-    FormEdit.ui
+    FormEdit.ui \
+    mainwindow.ui
 
 RESOURCES += \
     images.qrc

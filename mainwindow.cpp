@@ -1,10 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
+#include <QMap>
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
+
+#include <tree/treemodel.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     creatAction();
     setContextMenu();
     setCurrentFileName(QString());
+    on_action_open_triggered();
 
 }
 
@@ -54,44 +59,7 @@ void MainWindow::setContextMenu()
 
 void MainWindow::on_action_open_triggered() // Открыть файл
 {
-    QString fn = QFileDialog::getOpenFileName(this,      tr("Открыть файл..."),
-                                              QString(), tr("XML (*.xml);;Все файлы (*)"));
-    if (!fn.isEmpty())
-        load(fn);
-
-    //  Исходный файл разбиваем на список строк: QStringList all_textFile;
-
-    QFile mFile(fileName);
-    if( !mFile.open(QIODevice::ReadOnly) ) {
-        QMessageBox::warning(this, tr("Error"),
-                             tr("Cannot read file %1:\n%2.")
-                            .arg(mFile.fileName())
-                            .arg(mFile.errorString()));
-        buttView = true;
-        return;
-    }
-    QTextStream stream(&mFile);
-    QString buffer;
-    while (!stream.atEnd()) {
-        buffer = stream.readLine();
-        QString tab = "";
-        while ( buffer[0] == "\t" ) {
-            buffer.remove(0,1);
-            tab += " ";
-        }
-        bu += tab + buffer + "\n";
-
-        all_textFile << tr("%1%2").arg(tab).arg(buffer);
-    }
-
-    getFile(all_textFile);
-    all_textFile.clear();
-
-    ui->statusBar->showMessage("Файл открыт");
-    buttView = false;
-
-    mFile.flush();
-    mFile.close();
+    loadFile();
 }
 
 void MainWindow::on_action_aboutQt_triggered() // Описание Qt
@@ -105,40 +73,111 @@ void MainWindow::on_action_exit_triggered() // Завершить програм
     close();
 }
 
-bool MainWindow::load(const QString &f)
+bool MainWindow::loadFile()
 {
-    if (!QFile::exists(f))
+    QString path = QFileDialog::getOpenFileName(this,      tr("Открыть файл..."),
+                                              QString(), tr("XML (*.xml);;Все файлы (*)"));
+    if (path.isEmpty())
+    {
+        qDebug() << "No file name specified";
+        ui->treeView_General->setHidden(true);
         return false;
-    QFile file(f);
-    if (!file.open(QFile::ReadOnly))
-        return false;
+    }
 
-    setCurrentFileName(f);
+    QFile file(path);
+    if (!file.exists()){
+        qDebug() << "File not found!";
+        ui->treeView_General->setHidden(true);
+        return false;
+    }
+    if (!file.open(QFile::ReadOnly)) {
+        QMessageBox::warning(this, tr("Error"),
+                                    tr("Access error!"),
+                                     tr("Cannot read file %1:\n%2.")
+                                     .arg(file.fileName())
+                                     .arg(file.errorString()));
+        qDebug() << "Access error!";
+        ui->treeView_General->setHidden(true);
+        return false;
+    }
+    setCurrentFileName(path);
+
+    QTextStream stream(&file);
+    QStringList fullText;
+    while (!stream.atEnd()) {
+        QString input = stream.readLine();
+        QString indent = ""; // отступ
+        while ( input[0] == "\t" ) {
+            input.remove(0,1);
+            indent += " ";
+        }
+        input = indent + input + "\n";
+        fullText << input;
+    }
+    m_fullText.insert(path, fullText);
+
+    ui->treeView_General->setHidden(buttView);
+    ui->statusBar->showMessage(QString("Open the file: %1").arg(path));
+    buttView = false;
+
+    file.flush();
+    file.close();
+
+    QMap<QString, QStringList>::iterator iter = m_fullText.begin();
+    QVariant cur = iter.value();
+    QStringList str = cur.toStringList();
+    initModel(str);
+//    qDebug() << iter.value().at(0);
+
     return true;
 }
 
 void MainWindow::setCurrentFileName(const QString &fileName)
 {
-    this->fileName = fileName;
-    QString shownName;
+    QString defaultName;
     if (fileName.isEmpty())
-        shownName = "untitled.objects";
+        defaultName = "untitled.objects";
     else {
-        shownName = QFileInfo(fileName).fileName();
-        setWindowTitle(tr("%1%2[*]").arg("Редактор xml - ").arg(shownName));
+        defaultName = QFileInfo(fileName).fileName();
     }
+    setWindowTitle(tr("%1%2[*]").arg("Редактор xml - ").arg(defaultName));
     setWindowModified(false);
 }
 
-void MainWindow::getFile(const QStringList &all_textFile)
+void MainWindow::getFile(const QStringList &text)
 {
-/*****!    Загрузка  файла в объект QStringList all_textFile    *****/
+    Q_UNUSED(text)
+/*****!    Загрузка  файла в объект QStringList fullText    *****/
 /*****!         Без символов табуляции в начале строки          *****/
-    this->all_textFile = all_textFile;
+//    fullText = text;
 
-//    model = new TreeView(all_textFile, this);
+//    model = new TreeView(fullText, this);
 //    ui->treeView_General->setModel(model);
 
-    ui->treeView_General->setHidden(buttView);
+    //    ui->treeView_General->setHidden(buttView);
 }
 
+void MainWindow::initModel(QStringList &textFile)
+{
+    for (int i = 0; i < textFile.size(); i++) {
+        qDebug() << textFile.at(i);
+    }
+    m_treeModel = new TreeModel(textFile);
+    ui->treeView_General->setModel(m_treeModel);
+    ui->treeView_General->setHidden(buttView);
+
+
+}
+
+
+void MainWindow::on_action_viewTree_triggered()
+{
+    if(!buttView) {
+        buttView = true;
+        ui->treeView_General->setHidden(buttView);
+    }
+    else {
+        buttView = false;
+        ui->treeView_General->setHidden(buttView);
+    }
+}

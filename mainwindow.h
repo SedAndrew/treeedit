@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
+class TreeModel;
 
 namespace Ui {
 class MainWindow;
@@ -14,7 +15,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -24,22 +24,24 @@ public:
     void setContextMenu();
     void form_editing();
 
-    bool load(const QString &f);
+    bool loadFile();
     void setCurrentFileName(const QString &fileName);
-    void getFile(const QStringList &all_textFile);
+    void getFile(const QStringList &text);
+    void initModel(QStringList &textFile);
 
 private slots:
     void on_action_open_triggered();
     void on_action_aboutQt_triggered();
     void on_action_exit_triggered();
 
+    void on_action_viewTree_triggered();
+
 private:
-    QString fileName;
+    QMap<QString, QStringList> m_fullText;
 
-
+    TreeModel *m_treeModel;
     bool buttView;
-    QString bu;
-    QStringList all_textFile;
+
     Ui::MainWindow *ui;
 };
 
