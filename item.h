@@ -25,7 +25,7 @@ public:
     Item *child(int row); // возвращает потомка
     Item *parent(); // возвращает родителя
 
-    bool setData(int column, const QVariant &data); // задает значения веток после изменения (flags )
+    bool setData(int column, const QVariant &data); // задает значения веток после изменения (flags Qt::ItemIsEditable)
     QVariant data(int column) const; // значение из строки тега по указанному номеру
     int row() const; // индекс потомка по отношению к своему родителю
     int columnCount() const; // количество атрибутов

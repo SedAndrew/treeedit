@@ -26,7 +26,7 @@ int TreeModel::columnCount(const QModelIndex &parent) const
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
 {   // вызывается при после каждого взаимодействия с ветками (наведение, снятие, перемещение)
-    // возвращает строку с именем ветки
+    // возвращает элемент данных, соответствующего аргументу-индексу
     if (!index.isValid())
         return QVariant();
     if (role != Qt::DisplayRole)
