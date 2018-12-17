@@ -73,10 +73,22 @@ void MainWindow::on_action_exit_triggered() // Завершить програм
     close();
 }
 
+void MainWindow::on_action_viewTree_triggered()
+{
+    if(!buttView) {
+        buttView = true;
+        ui->treeView_General->setHidden(buttView);
+    }
+    else {
+        buttView = false;
+        ui->treeView_General->setHidden(buttView);
+    }
+}
+
 bool MainWindow::loadFile()
 {
     QString path = QFileDialog::getOpenFileName(this,      tr("Открыть файл..."),
-                                              QString(), tr("XML (*.xml);;Все файлы (*)"));
+                                    QString(), tr("XML (*.xml);;Все файлы (*)"));
     if (path.isEmpty())
     {
         qDebug() << "No file name specified";
@@ -170,14 +182,4 @@ void MainWindow::initModel(QStringList &textFile)
 }
 
 
-void MainWindow::on_action_viewTree_triggered()
-{
-    if(!buttView) {
-        buttView = true;
-        ui->treeView_General->setHidden(buttView);
-    }
-    else {
-        buttView = false;
-        ui->treeView_General->setHidden(buttView);
-    }
-}
+

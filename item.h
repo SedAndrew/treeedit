@@ -17,18 +17,18 @@ public:
     Item(const QList<QVariant> &data, Item *parent = 0);
     ~Item();
 
-    int childCount() const;
-    void appendChild(Item *child);
-    bool insertChild(int row, Item *item);
-    bool removeChild(int row);
+    int childCount() const; // количество потомков (элементов в списке childItems)
+    void appendChild(Item *child); // добавление в childItems
+    bool insertChild(int row, Item *item); // вставка в childItems
+    bool removeChild(int row); // удаление из childItems
 
     Item *child(int row); // возвращает потомка
     Item *parent(); // возвращает родителя
 
-    bool setData(int column, const QVariant &data);
-    QVariant data(int column) const;
-    int row() const;
-    int columnCount() const;
+    bool setData(int column, const QVariant &data); // задает значения веток после изменения (flags )
+    QVariant data(int column) const; // значение из строки тега по указанному номеру
+    int row() const; // индекс потомка по отношению к своему родителю
+    int columnCount() const; // количество атрибутов
 
 
 private:
